@@ -1,10 +1,10 @@
 [app]
 
 # (str) Title of your application
-title = Mortgage Calculator
+title = lena bot
 
 # (str) Package name
-package.name = mortgagecalculator
+package.name = lenabot
 
 # (str) Package domain (needed for android/ios packaging)
 package.domain = org.wiseplat
