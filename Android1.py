@@ -1,29 +1,37 @@
-#import kivymd
-
-#from kivymd.app import MDApp
-from kivymd.uix.screen import MDScreen
-from kivymd.uix.button import MDRectangleFlatButton
-#from kivy.lang import Builder
 from kivy.lang import Builder
-from kivymd.app import MDApp
-
-#боковое окно слева
-from kivy.lang import Builder
-from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import StringProperty, ListProperty
+from kivy.uix.boxlayout import BoxLayout
 
 from kivymd.app import MDApp
+from kivymd.font_definitions import fonts
+from kivymd.icon_definitions import md_icons
 from kivymd.theming import ThemableBehavior
+from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.list import OneLineIconListItem, MDList
+from kivymd.uix.tab import MDTabsBase
+#tr = Lang("en")
+# from kivy.utils import tr
+# кв файл типо cSS
 
 KV = '''
+# https://stackoverflow.com/questions/65698145/kivymd-tab-name-containing-icons-and-text
+# this import will prevent disappear tabs through some clicks on them)))
+#:import md_icons kivymd.icon_definitions.md_icons
+#:import fonts kivymd.font_definitions.fonts
 # Menu item in the DrawerList list.
+#:import tr kivy.utils.get_color_from_hex
+# https://github.com/tito/kivy-gettext-example
+# this import for multilingual support
+
+
+
+
 <ItemDrawer>:
     theme_text_color: "Custom"
     on_release: self.parent.set_color_item(self)
 
     IconLeftWidget:
-        
+
         id: icon
         icon: root.icon
         theme_text_color: "Custom"
@@ -47,13 +55,13 @@ KV = '''
             source: "data/logo/kivy-icon-256.png"
 
     MDLabel:
-        text: "Test Name"
+        text: app.title
         font_style: "Button"
         size_hint_y: None
         height: self.texture_size[1]
 
     MDLabel:
-        text: "your@gmail.com"
+        text: app.by_who
         font_style: "Caption"
         size_hint_y: None
         height: self.texture_size[1]
@@ -77,13 +85,26 @@ Screen:
                     orientation: 'vertical'
 
                     MDTopAppBar:
-                        title: "LenaYourOptions"
+                        title: app.title
                         elevation: 10
                         left_action_items: [['menu', lambda x: nav_drawer.set_state("open")]]
+                        right_action_items: [['star-outline', lambda x: nav_drawer.set_state("open")]]
+                        #верхнее поле самое
+                        md_bg_color: 0, 0, 0, 1
+
+                    MDTabs:
+                        id: tabs
+                        #on_tab_switch
+                        on_ref_press: app.on_ref_press(*args)
+                       # size_hint_y: None
+                        height: "48dp"
+                        tab_indicator_anim: False
+                        #красит меню с кнопками
+                        background_color: 0.1, 0.1, 0.1, 1
 
                     Widget:
-                        MDTextField:
-                            hint_text:"NoHellys"
+
+
 
         MDNavigationDrawer:
             id: nav_drawer
@@ -92,6 +113,11 @@ Screen:
                 id: content_drawer
 '''
 
+
+
+
+
+#классы бокового навигационного меню
 
 class ContentNavigationDrawer(BoxLayout):
     pass
@@ -113,44 +139,81 @@ class DrawerList(ThemableBehavior, MDList):
                 break
         instance_item.text_color = self.theme_cls.primary_color
 
+# класс закладок сверху
 
-class lenabotApp(MDApp):
+#класс закладок сверху
+
+class Tab(MDFloatLayout, MDTabsBase):
+    '''Class implementing content for a tab.'''
+
+
+
+class LenabotApp(MDApp):
+    title = "Elena your friend"
+    by_who = "By RIFT"
+
     def build(self):
         return Builder.load_string(KV)
 
     def on_start(self):
-        icons_item = {
-            "folder": "Bagg",
-            "account-multiple": "Shared with me",
+
+        icons_item_menu_lines = {
+            "bag-personal": "Bag",
+            "account": "Profile",
             "star": "Progress",
-            "history": "Recent",
-            "checkbox-marked": "Shared with me",
-            "upload": "Upload",
+            "shopping": "Shop",
+            "mower-bag-on": "Help us",
+            "shield-sun": "Dark\Light",
+            "help": "Help",
         }
-        for icon_name in icons_item.keys():
+        icons_item_menu_tabs = {
+            "chat-question": "Quest",
+            "robot-love": "Relations",
+            "book": "Progress",
+            "group":"Change",
+
+        }
+
+        for icon_name in icons_item_menu_lines.keys():
             self.root.ids.content_drawer.ids.md_list.add_widget(
-                ItemDrawer(icon=icon_name, text=icons_item[icon_name])
+                ItemDrawer(icon=icon_name, text=icons_item_menu_lines[icon_name])
             )
 
-
-lenabotApp().run()
-
-#конец бокового меню-----------------------------------------------------------------------------
-#кнопка---------------------------------------------------------------------------------------
-
-class MainApp(MDApp):
-    def build(self):
-        self.theme_cls.theme_style = "Dark"
-        self.theme_cls.primary_palette = "Orange"
-
-        return (
-            MDScreen(
-                MDRectangleFlatButton(
-                    text="Lamda, Pidor",
-                    pos_hint={"center_x": 0.5, "center_y": 0.5},
-                )
-            )
-        )
+        # To auto generate tabs
+        for icon_name, name_tab in icons_item_menu_tabs.items():
+            self.root.ids.tabs.add_widget(Tab(icon= icon_name,title=f" {name_tab}"))
 
 
-MainApp().run()
+
+    # tab_switch #on_tab_switch
+
+    def on_ref_press(
+            self,
+            instance_tabs,
+            instance_tab_label,
+            instance_tab,
+            instance_tab_bar,
+            instance_carousel,
+    ):
+        '''
+        The method will be called when the ``on_ref_press`` event
+        occurs when you, for example, use markup text for tabs.
+
+        :param instance_tabs: <kivymd.uix.tab.MDTabs object>
+        :param instance_tab_label: <kivymd.uix.tab.MDTabsLabel object>
+        :param instance_tab: <__main__.Tab object>
+        :param instance_tab_bar: <kivymd.uix.tab.MDTabsBar object>
+        :param instance_carousel: <kivymd.uix.tab.MDTabsCarousel object>
+        '''
+
+    def on_star_click(self):
+        pass
+
+
+LenabotApp().run()
+
+# конец бокового меню-----------------------------------------------------------------------------
+
+
+# кнопка---------------------------------------------------------------------------------------
+
