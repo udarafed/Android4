@@ -9,6 +9,11 @@ from kivymd.theming import ThemableBehavior
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.list import OneLineIconListItem, MDList
 from kivymd.uix.tab import MDTabsBase
+from kivy.lang import Builder
+from kivy.properties import StringProperty
+
+from kivymd.app import MDApp
+from kivymd.uix.relativelayout import MDRelativeLayout
 #tr = Lang("en")
 # from kivy.utils import tr
 # кв файл типо cSS
@@ -22,9 +27,6 @@ KV = '''
 #:import tr kivy.utils.get_color_from_hex
 # https://github.com/tito/kivy-gettext-example
 # this import for multilingual support
-
-
-
 
 <ItemDrawer>:
     theme_text_color: "Custom"
@@ -89,21 +91,81 @@ Screen:
                         elevation: 10
                         left_action_items: [['menu', lambda x: nav_drawer.set_state("open")]]
                         right_action_items: [['star-outline', lambda x: nav_drawer.set_state("open")]]
-                        #верхнее поле самое
-                        md_bg_color: 0, 0, 0, 1
-
+                        md_bg_color: (0, 0, 0, 1)
+    
                     MDTabs:
                         id: tabs
-                        #on_tab_switch
                         on_ref_press: app.on_ref_press(*args)
-                       # size_hint_y: None
                         height: "48dp"
                         tab_indicator_anim: False
-                        #красит меню с кнопками
-                        background_color: 0.1, 0.1, 0.1, 1
-
-                    Widget:
-
+                        background_color: (0.1, 0.1, 0.1, 1)
+    
+                        Tab:
+                            id: tab1
+                            icon: 'chat-question'
+                            text: "Quest"
+                            
+                            #наполнение контентом закладки Quest
+                        
+                            BoxLayout:
+                                orientation: 'vertical'
+                                padding: "300dp"
+                        
+                                BoxLayout:
+                                    orientation: 'horizontal'
+    
+                                    MDIconButton:
+                                       # icon: "calendar-month"
+                                        icon: "eye-off"
+                                         
+                                    MDTextField:
+                                        hint_text: "Round mode"
+                                        mode: "round"
+                                        max_text_length: 15
+                                        helper_text: "Massage"
+                                                                                
+                        
+                            
+                        Tab:
+                            id: tab2
+                            icon: 'robot-love'
+                            text: "Robot"
+                            
+                            #наполнение закладки Robot
+                            
+                            BoxLayout:
+                                orientation: 'vertical'
+                                padding: "300dp"
+                        
+                                BoxLayout:
+                                    orientation: 'horizontal'
+    
+                                    MDIconButton:
+                                       
+                                        icon: "clock-time-five-outline"
+                                         
+                                    MDTextField:
+                                        hint_text: "Round mode"
+                                        mode: "round"
+                                        max_text_length: 15
+                                        helper_text: "Massage"
+                                       # hint_text: tr._('Months')
+                                        color_mode: 'custom'
+                                        line_color_focus: 0,0,0,1
+                                        text_color: 0,0,0,1
+                                        current_hint_text_color: 0,0,0,1
+                                        input_filter: 'int'
+                                        helper_text_mode: "on_focus"
+                            
+                            
+                        Tab:
+                            id: tab3
+                            icon: 'book'
+                            text: "Relations"
+                        Tab:
+                            id: tab4
+                            icon: 'group'
+                            text: "Change"                           
 
 
         MDNavigationDrawer:
@@ -111,6 +173,7 @@ Screen:
 
             ContentNavigationDrawer:
                 id: content_drawer
+
 '''
 
 
@@ -146,7 +209,8 @@ class DrawerList(ThemableBehavior, MDList):
 class Tab(MDFloatLayout, MDTabsBase):
     '''Class implementing content for a tab.'''
 
-
+class MDIconButton():
+    pass
 
 class LenabotApp(MDApp):
     title = "Elena your friend"
@@ -180,8 +244,8 @@ class LenabotApp(MDApp):
             )
 
         # To auto generate tabs
-        for icon_name, name_tab in icons_item_menu_tabs.items():
-            self.root.ids.tabs.add_widget(Tab(icon= icon_name,title=f" {name_tab}"))
+#        for icon_name, name_tab in icons_item_menu_tabs.items():
+#            self.root.ids.tabs.add_widget(Tab(icon= icon_name,title=f" {name_tab}"))
 
 
 
